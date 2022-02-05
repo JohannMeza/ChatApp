@@ -1,0 +1,41 @@
+module.exports = {
+  content: [
+    "./public/index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+  ],
+  theme: {
+    colors: {
+      gray: {
+        '100': '#F8F9FA',
+        '200': '#E9ECEF',
+        '300': '#DEE2E6',
+        '400': '#CED4DA',
+        '500': '#ADB5BD',
+        '600': '#6C757D',
+        '700': '#495057',
+        '800': '#343A40',
+        '900': '#212529',
+      },
+      primary: '#7C99AC',
+      secondary: '#92A9BD',
+      third: '#D3DEDC',
+      blue: '#3A86FF',
+      red: '#3A86FF',
+      green: '#77D970',
+      white: '#FFEFEF',
+      'white-opacity': 'rgba(248, 249, 250, .5)'
+    },
+    fontFamily: {
+      'chettan': ["'Baloo Chettan 2'", 'cursive'],
+    },
+    extend: {
+      'backgroundImage': () => ({
+        'pattern-body': 'linear-gradient(111.34deg, #7C99AC 0%, #FFEFEF 100%)'
+      })
+    },
+    container: {
+      center: true
+    }
+  },
+  plugins: [],
+}
