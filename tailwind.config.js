@@ -12,18 +12,20 @@ module.exports = {
         '400': '#CED4DA',
         '500': '#ADB5BD',
         '600': '#6C757D',
-        '700': '#495057',
-        '800': '#343A40',
+        '700': '#495057', 
+        '800': '#343A40', 
         '900': '#212529',
       },
-      primary: '#7C99AC',
-      secondary: '#92A9BD',
-      third: '#D3DEDC',
+      primary: '#7C99AC', // color light blue tenue
+      secondary: '#92A9BD', // color light blue 
+      third: '#D3DEDC', // color verde
       blue: '#3A86FF',
-      red: '#3A86FF',
+      red: '#DA1E37',
       green: '#77D970',
-      white: '#FFEFEF',
-      'white-opacity': 'rgba(248, 249, 250, .5)'
+      'red-light': '#FFEFEF',
+      'white-light': '#fff',
+      'white-opacity': 'rgba(248, 249, 250, .5)',
+      transparent: 'rgba(255, 255, 255, 0)'
     },
     fontFamily: {
       'chettan': ["'Baloo Chettan 2'", 'cursive'],
