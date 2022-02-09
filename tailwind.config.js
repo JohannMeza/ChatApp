@@ -21,6 +21,7 @@ module.exports = {
       third: '#D3DEDC', // color verde
       blue: '#3A86FF',
       red: '#DA1E37',
+      white: '#FFEFEF',
       green: '#77D970',
       'red-light': '#FFEFEF',
       'white-light': '#fff',
@@ -37,7 +38,14 @@ module.exports = {
     },
     container: {
       center: true
-    }
+    },
+    screens: {
+      'sm': '640px',
+      'md': '800px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
   },
   plugins: [],
 }

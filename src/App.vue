@@ -6,8 +6,40 @@
 
 <script>
 import './assets/tailwind.css'
+import { useRouter } from "vue-router"
+import { access } from "./services/SignServices"
+import { ref } from 'vue';
+import { useStore } from 'vuex'
+
 export default {
   name: 'App',
+
+  setup () {
+    const router = useRouter();
+    const token = ref(localStorage.getItem('token'))
+    const store = useStore()
+
+    const validLogin = async () => {
+      if (token.value) {
+        try {
+          const res = await access()
+          store.state.user = res.data
+          console.log(res.data)
+          router.push('/chat')
+        } catch (err) {
+          localStorage.removeItem('token')
+          router.push('/')
+        }
+      } else {
+        localStorage.removeItem('token')
+        router.push('/')
+      }
+    }
+
+    validLogin()
+
+    return { token }
+  }
 }
 </script>
 

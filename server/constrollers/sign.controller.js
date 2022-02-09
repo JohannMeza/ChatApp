@@ -3,19 +3,36 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config')
 
+const toAccess = (req, res) => {
+  console.log(req.token)  
+  jwt.verify(req.token, config.SECRET, (err, userData) => {
+    if (err) {
+      res.status(500).json({ message: "Invalid Token" })
+    } else {
+      res.status(201).json(userData)
+    }
+  })
+}
+
 const signIn = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("datos", req.body)
 
-    const userEmail = await User.findOne({ email }, { email: 1, password: 1 })
-    if (!userEmail) return res.status(401).json({ message: "Email incorrect" })
+    const userEmail = await User.findOne({ email }, { email: 1, password: 1, name: 1 })
+    if (!userEmail) return res.json({ message: "Email incorrect" })
     
     const passwordDecript = bcrypt.compareSync(password, userEmail.password)
-    if (!passwordDecript) return res.status(401).json({ message: "Password incorrect" })
+    if (!passwordDecript) return res.json({ message: "Password incorrect" })
 
-    res.json(userEmail)
+    // Generate Token
+    const token = jwt.sign({ user: userEmail }, config.SECRET, {
+      expiresIn: 86400 * 7 // 24 horas * 7 dias
+    })
+
+    res.status(201).json({ token })
   } catch (err) {
-    return res.status(500).send({ message: 'Error not found' })
+    return res.status(500).json({ message: 'Error not found', error: err })
   }
 }
 
@@ -26,6 +43,9 @@ const signUp = async (req, res) => {
     // if (!name || !email || !password) return res.status(401).json({ message: "Data incompleted" })
     const salt = await bcrypt.genSalt(10);
     
+    const userDuplicate = await User.findOne({ email: email })
+    if (userDuplicate) return res.json({ message: 'Usuario ya registrado' })
+
     const user = new User({
       name,
       email,
@@ -34,19 +54,14 @@ const signUp = async (req, res) => {
     })
 
     const userSave = await user.save();
-    console.log(user)
-
-    const token = jwt.sign({id: userSave}, config.SECRET, {
-      expiresIn: 86400 // 24 horas
-    })
-
-    res.status(201).json({ token })
+    res.status(201).json(userSave)
   } catch (err) {
     return res.status(500).json({ message: 'Error not found' + err })
   }
 }
 
 module.exports = {
+  toAccess,
   signIn,
   signUp
 }

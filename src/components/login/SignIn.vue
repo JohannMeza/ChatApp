@@ -5,34 +5,98 @@
         <img src="../../assets/logo.svg" alt="Logotipo" width="180">
       </div>
 
-      <div class="w-3/4 container flex flex-col gap-4">
+      <form 
+      class="w-3/4 container flex flex-col gap-4"
+      @submit.prevent="loginUser"
+      >
+        <span v-if="messageError" class="bg-white text-red p-2 rounded font-semibold my-2">* {{ messageError }}</span>
+
         <div>
           <label for="email" class="font-bold block mb-2">Email</label>
-          <input type="email" autocomplete="off" id="email" class="block w-full reset-input">
+          <input type="email" required autocomplete="off" id="email" class="block w-full reset-input" v-model="dataUser.email">
         </div>
 
         <div>
           <label for="pass" autocomplete="off" class="font-bold block mb-2">Contraseña</label>
-          <input type="password" id="pass" class="block w-full reset-input">
+          <div class="relative flex items-center">
+            <input 
+            type="password" 
+            required 
+            id="pass" 
+            class="block w-full reset-input" 
+            v-model="dataUser.password"
+            v-if="!visiblePassword"
+            >
+            <input 
+            type="text" 
+            required 
+            id="pass" 
+            class="block w-full reset-input" 
+            v-model="dataUser.password"
+            v-else
+            >
 
-          <div class="mt-3 flex items-center gap-3 select-none">
-            <input type="checkbox" id="show" class="w-4 h-4">
-            <label for="show">Mostrar contraseña</label>
+            <span class="btnchat absolute top-0 bottom-0 my-auto right-2">
+              <input type="checkbox" id="show" class="hidden" v-model="visiblePassword">
+              <label for="show" class="cursor-pointer">
+                <i class="far fa-eye" v-if="visiblePassword"></i>
+                <i class="fas fa-eye-slash" v-else></i>
+              </label>
+            </span>
           </div>
         </div>
 
         <div class="flex-c-center gap-5">
-          <button class="btn-login btn-min-scale">Iniciar sesión</button>
+          <button type="submit" class="btn-login btn-min-scale">Iniciar sesión</button>
           <span>
             Si no tienes una cuenta, haz click aqui 
             <router-link to="/register" class="underline text-blue">Registrase</router-link>
           </span>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
 
-<style lang="scss">
+<script>
+import { ref } from "vue"
+import { useRouter } from "vue-router";
+import { signIn  } from "../../services/SignServices"
+export default {
+  name: "Login",
 
-</style>
+  setup() {
+    const router = useRouter();
+    const dataUser = ref({
+      email: '',
+      password: ''
+    });
+
+    // const router = useRouter()
+    const messageError = ref('');
+    const visiblePassword = ref(false)
+
+    const loginUser = async () => {
+      try {
+        const res = await signIn(dataUser.value)
+        if (res.data.message) throw ({ message: res.data.message })
+        localStorage.setItem('token', res.data.token)
+        router.push('/chat')
+      } catch (err) {
+        messageError.value = err.message
+        console.error(err)
+      }
+    }
+
+    return { 
+      // Variables
+      dataUser,
+      messageError,
+      visiblePassword,
+
+      // Funciones async
+      loginUser
+    }
+  }
+}
+</script>

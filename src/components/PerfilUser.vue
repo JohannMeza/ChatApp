@@ -21,7 +21,7 @@
           class="px-3 rounded-md mt-2 flex justify-between items-center h-12 bg-white-opacity"
           v-if="!switchData.name"
           >
-            <span>Esther Howard</span>
+            <span>{{ $store.state.user.name }}</span>
             <span class="btnchat cursor-pointer" @click="switchData.name = true"><i class="fas fa-edit"></i></span>
           </div>
 
