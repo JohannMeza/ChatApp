@@ -23,8 +23,7 @@ export default {
       if (token.value) {
         try {
           const res = await access()
-          store.state.user = res.data
-          console.log(res.data)
+          store.state.id = res.data.id
           router.push('/chat')
         } catch (err) {
           localStorage.removeItem('token')

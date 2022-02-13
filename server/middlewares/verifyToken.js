@@ -1,6 +1,5 @@
 const verifyToken = (req, res, next) => {
   const authorization_header = req.headers['authorization'];
-  console.log("token", authorization_header)
   if (authorization_header) {
     const token = authorization_header;
     req.token = token

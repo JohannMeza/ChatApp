@@ -1,41 +1,135 @@
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const config = require('../config')
-const encryptPassword = require('../libs/EncryptPass')
+// const Message = require('../models/Message');
+// const mongoose = require('mongoose');
+const encryptPassword = require('../libs/EncryptPass');
 
-const userLogin = async (req, res) => {
-  const user = await User.find();
-  res.status(200).json(user)
-} 
-
-const userRegister = async (req, res) => {
+/**
+ * Get all users by his message
+ */
+const index = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    const imgUrl = req.file.path || 'imagen por default' // --- Save Image
-    const user = new User({ 
-      name, 
-      email, 
-      imgUrl,
-      password: await encryptPassword(5, password) 
-    });
-
-    const userSave = await user.save();
-    console.log(userSave)
-
-    const token = jwt.sign({id: userSave}, config.SECRET, {
-      expiresIn: 86400 // 24 horas
-    })
-
-    res.status(201).json({token});
+    const { search } = req.body;
+    const users = await User.find({ name: { $regex: `.*${search}.*` } }).limit(10);
+    res.status(201).json(users)
   } catch (err) {
-    return res.status(500).json({message: "Error not Found"})
+    return res.status(500).json({ message: `Error on server ${err}` })
   }
 }
 
-const index = async (req, res) => {
-  const users = await User.find();
-  res.status(201).json(users)
-}
+// const index = async (req, res) => {
+//   try {
+//     let { id } = req.body;
+//     const mensajesActivos = [];
+//     id = mongoose.Types.ObjectId(id);
+    
+//     const users = await Message.aggregate([
+//       { $sort: { updatedAt: -1 } },
+//       { $match: { $or: [ { to: id }, { from: id } ] } },
+//       { 
+//         $group: { 
+//           _id: "$to",
+//           message: { $first: "$message" },
+//           from: { $first: "$from" },
+//           to: { $first: "$to" },
+//           updatedAt: { $first: "$updatedAt" }
+//         } 
+//       }
+//     ]);
+
+//     let data = users[0];
+
+//     console.log(users)
+
+//     users.forEach(el => {
+//       let arrId = [];
+//       arrId.push(el._id[0], el.from)
+//       let orderId = arrId.sort().join('');
+//       el.unionId = orderId
+//     })
+
+//     users.sort((a, b) => {
+//       if (a.updatedAt > b.updatedAt) {
+//         return 1
+//       }
+
+//       if (a.updatedAt < b.updatedAt) {
+//         return -1
+//       }
+
+//       return 0
+//     })
+
+
+
+    
+      
+//     users.forEach((el, index) => {
+//       if (el.unionId === data.unionId) {
+//         if (index === 0) {
+//           mensajesActivos.push(el)
+//         }
+
+//         if (index !== 0) {
+//           console.log(new Date(el.updatedAt).getTime())
+//           console.log(new Date(data.updatedAt).getTime())
+//             if (new Date(el.updatedAt).getTime() < new Date(data.updatedAt).getTime()) {
+//               console.log("es menor")
+//             } else {
+//               console.log("es MAYOR")
+//               mensajesActivos.push(el)
+//             }
+//         }
+//       }
+
+//       data = el
+//     })
+
+//     await Message.populate(mensajesActivos, { path: 'to' })
+//     res.status(201).json(mensajesActivos)
+
+//     // console.log(mensajesActivos)
+
+
+//     // data.push(users[0]._id[0], users[0].from)
+//     // let dataId = data.sort().join('')
+//     // let orderId = ''
+//     // // console.log(dataId)
+
+//     // users.forEach(el => {
+//     //   const arrId = []
+
+//     //   if (arrId.length === 0) {
+//     //     mensajesActivos.push(el)
+//     //   } else {
+//     //     arrId.push(el._id[0], el.from)
+//     //     orderId = arrId.sort().join('');
+//     //   }
+
+//     //   console.log("data", dataId, "+")
+//     //   console.log("order", orderId, "+")
+
+
+//     //   if (dataId === orderId) {
+//     //     console.log("Doble coincidencia")
+//     //     console.log(new Date(el.updatedAt).getTime())
+//     //     let coinId.push(el._id[0], el.from)
+//     //   orderId = arrId.sort().join('');
+//     //     const coincidence = users.findIndex((el, index) => {
+//     //       if (el.)
+//     //     })
+//     //   }
+
+//     //   arrId.push(el._id[0], el.from)
+//     //   orderId = arrId.sort().join('');
+//     //   dataId = orderId
+//     // })
+
+    
+    
+//   } catch (err) {
+//     return res.status(500).json({ message: "Error not found " + err }) 
+//   }
+// }
 
 const show = async (req, res) => {
   try {
@@ -44,6 +138,17 @@ const show = async (req, res) => {
     res.status(201).json(user);
   } catch (err) {
     return res.status(500).json({ message: 'Error not found' })
+  }
+}
+
+const uploadImage = async (req, res) => {
+  try {
+    if (!req.file) return res.json({ message: "Image not found" })
+    const image = `${req.file.path.split('\\').pop()}`;
+    const uploadImageToUser = await User.findByIdAndUpdate(req.params.id, { imgUrl: image }, { new: true })
+    res.status(201).json(uploadImageToUser)
+  } catch (err) {
+    res.status(500).json({ message: 'Error not found' + err })
   }
 }
 
@@ -73,10 +178,9 @@ const deleted = async (req, res) => {
 }
 
 module.exports = {
-  userLogin,
-  userRegister,
   index,
   show,
   upload,
+  uploadImage,
   deleted
 }

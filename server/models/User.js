@@ -1,26 +1,32 @@
 const { Schema, model } = require('mongoose');
 
 const userSchema = new Schema ({
-  name: {
-    type: String,
-    trim: true,
-    required: true
-  },
   email: {
     type: String,
-    trim: true,
     required: true,
+    trim: true,
     unique: true
   },
   password: {
     type: String,
-    trim: true,
-    required: true
-  },
-  imgUrl: {
-    type: String,
     required: true,
     trim: true
+  },
+  name: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  description: {
+    type: String,
+    trim: true,
+    default: 'Welcome a pipedrive'
+  },
+  image: {
+    type: String,
+    required: true,
+    trim: true,
+    default: '../assets/user-default.png'
   }
 },{
   versionKey: false,

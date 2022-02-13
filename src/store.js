@@ -3,7 +3,10 @@ import Vuex from 'vuex';
 
 export default new Vuex.Store({
   state: {
-    user: {} 
+    id: '',
+    user: {},
+    groups: {},
+    contacts: {}
   },
   mutations: {
     saveDataUser: (state) => {

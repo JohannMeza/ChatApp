@@ -1,27 +1,29 @@
 const { Schema, model } = require('mongoose');
 
 const messageSchema = new Schema ({
-  from: {
-    ref: 'User',
-    type: Schema.Types.ObjectId
+  sentBy: {
+    type: String,
+    required: true,
+    trim: true
   },
-  to: {
-    ref: 'User',
-    type: Schema.Types.ObjectId
+  receivedBy: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  viewed: {
+    type: Boolean,
+    default: 0
   },
   message: {
     type: String,
     required: true,
+    trim: true
   },
-  imgUrl: {
+  file: {
     type: String,
     trim: true
   },
-  viewed: {
-    type: Number,
-    required: true,
-    default: 0 
-  }
 },{
   versionKey: false,
   timestamps: true

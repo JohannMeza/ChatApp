@@ -7,14 +7,14 @@ const userController = require('../constrollers/user.controller')
 
 // --- Midllewares
 const middleware = require('../middlewares/index');
-// upload.single('file')
 
-router.get('/', userController.index);
+router.post('/', userController.index);
 
 router.get('/access',  middleware.verifyToken, signController.toAccess)
 router.post('/login', signController.signIn);
 router.post('/register', signController.signUp);
 
+router.post('/upload/:id', middleware.upload.single('file'), userController.uploadImage)
 router.get('/:id', userController.show);
 router.put('/:id', userController.upload);
 router.delete('/:id', userController.deleted);

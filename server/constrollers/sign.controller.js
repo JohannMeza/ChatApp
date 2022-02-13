@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const config = require('../config')
 
 const toAccess = (req, res) => {
-  console.log(req.token)  
   jwt.verify(req.token, config.SECRET, (err, userData) => {
     if (err) {
       res.status(500).json({ message: "Invalid Token" })
@@ -17,20 +16,19 @@ const toAccess = (req, res) => {
 const signIn = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("datos", req.body)
 
-    const userEmail = await User.findOne({ email }, { email: 1, password: 1, name: 1 })
+    const userEmail = await User.findOne({ email }, { _id: 1, email: 1, password: 1 })
     if (!userEmail) return res.json({ message: "Email incorrect" })
     
     const passwordDecript = bcrypt.compareSync(password, userEmail.password)
     if (!passwordDecript) return res.json({ message: "Password incorrect" })
 
     // Generate Token
-    const token = jwt.sign({ user: userEmail }, config.SECRET, {
+    const token = jwt.sign({ id: userEmail._id }, config.SECRET, {
       expiresIn: 86400 * 7 // 24 horas * 7 dias
     })
 
-    res.status(201).json({ token })
+    res.status(201).json({ token: token, id: userEmail._id })
   } catch (err) {
     return res.status(500).json({ message: 'Error not found', error: err })
   }

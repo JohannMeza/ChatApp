@@ -21,10 +21,11 @@ const groupSchema = new Schema ({
     required: true,
     trim: true
   },
-  imgUrl: {
+  image: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
+    default: 'Link por default'
   }
 },{
   versionKey: false,

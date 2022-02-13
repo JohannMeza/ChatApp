@@ -62,10 +62,12 @@
 import { ref } from "vue"
 import { useRouter } from "vue-router";
 import { signIn  } from "../../services/SignServices"
+import { useStore } from 'vuex'
 export default {
   name: "Login",
 
   setup() {
+    const store = useStore();
     const router = useRouter();
     const dataUser = ref({
       email: '',
@@ -81,6 +83,7 @@ export default {
         const res = await signIn(dataUser.value)
         if (res.data.message) throw ({ message: res.data.message })
         localStorage.setItem('token', res.data.token)
+        store.state.id = res.data.id
         router.push('/chat')
       } catch (err) {
         messageError.value = err.message
