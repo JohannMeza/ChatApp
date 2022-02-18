@@ -27,7 +27,7 @@ const GroupUsersRoutes = require('./routes/group_user.routes')
 const RequestRoutes = require('./routes/request.routes')
 
 // --- Settings
-app.set('port', config.PORT);
+app.set('port', process.env.PORT || config.PORT || 3000);
 
 // --- Files Public
 app.use(express.static(path.join(__dirname, '..', '/', 'public')))
@@ -47,6 +47,7 @@ app.use('/api/groupUser', GroupUsersRoutes)
 app.use('/api/request', RequestRoutes)
 
 module.exports = { 
+  app,
   server,
   config
  };
