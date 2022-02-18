@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-const messageController = require('../constrollers/message.controller');
+const messageController = require('../controllers/message.controller');
 // const middleware = require('../middlewares/index')
 
 router.get('/', messageController.index)

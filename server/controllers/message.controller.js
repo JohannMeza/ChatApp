@@ -9,7 +9,6 @@ const index = async (req, res) => {
 const userMessages = async (req, res) => {
   try {
     const { sentBy, receivedBy } = req.body;
-    console.log("Obteniendo mensajes", sentBy, receivedBy)
     const messages = await Message.find({ 
       $or: [
         { 

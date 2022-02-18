@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-const groupController = require('../constrollers/group.controller');
+const groupController = require('../controllers/group.controller');
 
 router.get('/', groupController.index);
 router.get('/:id', groupController.show)

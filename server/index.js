@@ -1,8 +1,8 @@
-const app = require('./app');
+const { server, config } = require('./app');
 const startConnection = require('./database')
 
 startConnection()
 
-app.listen(app.get('port'), () => {
-  console.log("Server on port", app.get('port'));
+server.listen(config.PORT, () => {
+  console.log("Server on port", config.PORT);
 })

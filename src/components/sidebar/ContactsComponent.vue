@@ -60,7 +60,9 @@
     class="flex justify-between rounded-lg md:mt-3 chat"
     v-for="contact in contactsSearch"
     :key="contact._id"
+    @click="$emit('chatUser', { data: contact, type: 'Contact' })"
     >
+
       <div class="flex gap-3">
         <img alt="Avatar" class="w-12 h-12 border-2 border-white-light rounded-full object-cover">
         <div>
@@ -84,7 +86,7 @@
 // import { showGroupsUser } from '@/src/services/GroupsUserServices';
 import { showContacts } from '../../services/ContactsServices';
 import { useStore } from 'vuex';
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 
 // --- Vue
 
@@ -96,13 +98,11 @@ export default {
     const contacts = ref(null);
     const contactsSearch = ref();
     
-    console.log("contacts")
-
     const getUser = async () => {
       const res = await showContacts(store.state.id)
-      contacts.value = res.data.idContacts
-      contactsSearch.value = contacts.value
+      contacts.value = res.data.idContacts ? res.data.idContacts : []
       store.state.contacts = contacts.value
+      contactsSearch.value = store.state.contacts
     }
 
     const searchContacts = () => {
@@ -111,6 +111,10 @@ export default {
     }
 
     getUser()
+
+    watchEffect(() => {
+      contactsSearch.value = store.state.contacts
+    })
 
     return {
       contactsSearch,

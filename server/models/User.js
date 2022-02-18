@@ -27,7 +27,7 @@ const userSchema = new Schema ({
     required: true,
     trim: true,
     default: '../assets/user-default.png'
-  }
+  },
 },{
   versionKey: false,
   timestamps: true

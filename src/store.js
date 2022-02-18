@@ -6,7 +6,7 @@ export default new Vuex.Store({
     id: '',
     user: {},
     groups: {},
-    contacts: {}
+    contacts: []
   },
   mutations: {
     saveDataUser: (state) => {

@@ -2,8 +2,8 @@ const { Router } = require("express");
 const router = Router();
 
 // -- Controllers 
-const signController = require('../constrollers/sign.controller')
-const userController = require('../constrollers/user.controller')
+const signController = require('../controllers/sign.controller')
+const userController = require('../controllers/user.controller')
 
 // --- Midllewares
 const middleware = require('../middlewares/index');

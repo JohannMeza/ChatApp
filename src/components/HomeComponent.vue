@@ -2,7 +2,8 @@
   <div class="h-screen flex-r-center">
     <div class="grid grid-cols-12 gap-5 chat-content h-screen">
       <div 
-      class="rounded-lg col-span-12 md:col-span-4 block-important overflow-hidden"
+      class="w-full rounded-lg col-span-12 md:col-span-4 block-important overflow-hidden"
+      v-show="!switchComponentsMobile"
       >
       <!-- v-show="!dataUserActive" -->
         <keep-alive>
@@ -10,16 +11,19 @@
           :is="componentActiveSidebar" 
           @chat-emit-user="chatEmitUser"
           @emit-cmponent-perfil="emittedComponent" 
-          class="h-full"
           ></component>
         </keep-alive>
       </div>
 
       <div 
-      class="bg-white-opacity h-full md:h-auto absolute md:relative col-span-8 block-important message-content rounded-xl overflow-hidden"
+      class="w-full bg-white-opacity h-full md:h-auto absolute md:relative col-span-8 block-important message-content rounded-xl overflow-hidden"
+      v-show="switchComponentsMobile"
       >
       <!-- v-show="dataUserActive" -->
-        <chat-message :userData="chatDataActive"></chat-message>
+        <chat-message 
+        :userData="chatDataActive"
+        @mobile-chat="switchComponentsMobile = false"
+        ></chat-message>
       </div>
     </div>
   </div>
@@ -59,12 +63,7 @@ export default {
     const store = useStore()
     const componentActiveSidebar = ref('Sidebar')
     const chatDataActive = ref({})
-
-    const shippingInformation = ref({
-      sentBy: '',
-      receivedBy: '',
-      message: '',
-    })
+    const switchComponentsMobile = ref(false)
 
     const chatOfUser = ref({
       contacts: {},
@@ -87,16 +86,10 @@ export default {
       })
     }
 
-    /**
-     * @param {id} User
-     * @return {data}
-     * Data of contact
-     * 
-     */
-    // const getUserAndMessage = async (data) => {
-    //   const res = await showMessageUserByUser({ sentBy: store.state.id, receivedBy: data._id })
-    //   chatDataActive.value = { message: res.data, data }
-    // }
+    const perfilMessage = () => {
+      const $perfilElement = document.getElementById('sidebar');
+      $perfilElement.classList.toggle('perfil-message-active')
+    }
 
     /**
      * @param {id} User
@@ -117,7 +110,7 @@ export default {
      */
     const chatEmitUser = (info) => {
       const { data, type } = info
-      
+
       const datos = store.state.contacts.find(el => {
         if (el._id === data._id) {
           return true
@@ -132,13 +125,11 @@ export default {
 
       if (type) {
         chatDataActive.value = data
-        console.log(chatDataActive.value)
-        console.log(data.add ? "Este agregado" : "No esta agregado")
-        // getUserAndMessage(data) // Function Async
       } else {
         chatDataActive.value = data
-        // getGroupAndMessage(data) // Function Async
       }
+
+      switchComponentsMobile.value = true
     }
 
     /**
@@ -149,30 +140,24 @@ export default {
       componentActiveSidebar.value = info
     }
 
-
     // LIfe Cycles 
     watchEffect(() => {
       if (store.state.id !== '') asyncPromise()
-
-      if (chatDataActive.value) {
-        shippingInformation.value = {
-          sentBy: store.state.id,
-          receivedBy: chatDataActive.value.data ? chatDataActive.value.data._id : null,
-        }
-      }
     })
+
 
 
     return { 
       // Variables
+      switchComponentsMobile,
       componentActiveSidebar,
       chatDataActive,
       chatOfUser,
-      shippingInformation,
     
       // Functions
       emittedComponent,
       chatEmitUser,
+      perfilMessage,
 
       // Functions Async 
       // sendMessage,
@@ -187,43 +172,8 @@ export default {
   max-height: 100%;
 }
 
-.panel-message {
-  height: 100vh;
-  max-height: 95vh;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-}
-
-.messages::-webkit-scrollbar {
-  width: 0px;
-}
-
-// Mensaje enviado
-.message-to::after {
-  content: "";
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  background: url(../assets/triangule.svg) no-repeat 100% / cover;
-  position: absolute;
-  bottom: 0;
-  left: -1px;
-  z-index: 10;
-  transform: translateY(45%);
-}
-
-// Mensaje recibido
-.message-from::after {
-  content: "";
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  background: url(../assets/triangule.svg) no-repeat 100% / cover;
-  position: absolute;
-  bottom: 0;
-  right: -1px;
-  z-index: 10;
-  transform: translateY(45%) rotate(180deg);
+.perfil-message-active {
+  transform: translateX(100%);
 }
 
 
@@ -231,25 +181,20 @@ export default {
   .message-content {
     display: block ;
   }
-
-  .btnPrevius {
-    display: none;
-  }
-
   .block-important {
     display: block !important;
   }
 
+  .btnPrevius {
+    display: none;
+  }
   .chat-content {
     max-width: 97%;
     max-height: 95%;
   }
 
-  .messages {
-    max-height: 68vh;
-    &::-webkit-scrollbar {
-      width: 20px;
-    }
+  .perfil-message-active {
+    transform: translateX(0%);
   }
 }
 </style>

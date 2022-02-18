@@ -2,7 +2,7 @@ const { Router } = require('express');
 const router = Router();
 
 // --- Controllers
-const messageGroup = require('../constrollers/message_group.controller')
+const messageGroup = require('../controllers/message_group.controller')
 
 router.get('', messageGroup.index)
 router.get('/:id', messageGroup.show)

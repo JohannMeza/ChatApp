@@ -2,7 +2,7 @@ const { Router } = require('express');
 const router = Router();
 
 // --- Controllers
-const contactsController = require('../constrollers/contacts.controller')
+const contactsController = require('../controllers/contacts.controller')
 
 router.get('/', contactsController.index)
 router.post('/', contactsController.store)

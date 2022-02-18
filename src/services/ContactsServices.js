@@ -5,3 +5,9 @@ export const indexContacts = async () =>
 
 export const showContacts = async (id) => 
   await axios.get(`/contacts/${id}`)
+
+export const storeContacts = async (body) => 
+  await axios.post(`/contacts`, body)
+
+export const updateContacts = async (id, body) =>
+  await axios.put(`/contacts/${id}`, body)

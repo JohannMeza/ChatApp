@@ -5,11 +5,19 @@
 </template>
 
 <script>
-import './assets/tailwind.css'
+// --- Sokcet.io
+import { socket } from './socket.client'
+
+// --- Vue
 import { useRouter } from "vue-router"
-import { access } from "./services/SignServices"
 import { ref } from 'vue';
 import { useStore } from 'vuex'
+
+// --- Services
+import { access } from "./services/SignServices"
+
+// --- Sources
+import './assets/tailwind.css'
 
 export default {
   name: 'App',
@@ -18,13 +26,14 @@ export default {
     const router = useRouter();
     const token = ref(localStorage.getItem('token'))
     const store = useStore()
-
+    
     const validLogin = async () => {
       if (token.value) {
         try {
           const res = await access()
           store.state.id = res.data.id
           router.push('/chat')
+          socket.emit('client:newconnection', res.data.id)
         } catch (err) {
           localStorage.removeItem('token')
           router.push('/')
