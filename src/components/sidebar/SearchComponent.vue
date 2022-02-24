@@ -15,7 +15,7 @@
     @click="$emit('chatUser', { data: user, type: 'Contact' })"
     >
       <div class="flex gap-3">
-        <img alt="Avatar" class="w-12 h-12 border-2 border-white-light rounded-full object-cover">
+        <img :src="`./storage/${user.image}`" alt="Avatar" class="w-12 h-12 border-2 border-white-light rounded-full object-cover">
         <div>
           <span class="font-bold name-chat text-lg">{{ user.name }}</span>
           <div class="flex gap-2 items-center">

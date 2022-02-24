@@ -133,7 +133,7 @@ const index = async (req, res) => {
 
 const show = async (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.params.id })
+    const user = await User.findById({ _id: req.params.id })
     if (!user) res.status(404).json({ message: 'User not found' })
     res.status(201).json(user);
   } catch (err) {
@@ -144,11 +144,11 @@ const show = async (req, res) => {
 const uploadImage = async (req, res) => {
   try {
     if (!req.file) return res.json({ message: "Image not found" })
-    const image = `${req.file.path.split('\\').pop()}`;
-    const uploadImageToUser = await User.findByIdAndUpdate(req.params.id, { imgUrl: image }, { new: true })
+    const image = req.file.filename
+    const uploadImageToUser = await User.findOneAndUpdate({ _id: req.params.id }, { image }, { new: true })
     res.status(201).json(uploadImageToUser)
   } catch (err) {
-    res.status(500).json({ message: 'Error not found' + err })
+    res.status(500).json({ message: 'Error on server' + err })
   }
 }
 
@@ -156,14 +156,16 @@ const upload = async (req, res) => {
   try {
     let { password } = req.body;
     
-    if (password) password = await encryptPassword(5, password)
-    req.body.password = password
+    if (password) {
+      password = await encryptPassword(5, password)
+      req.body.password = password
+    }
     
-    const userUpload = await User.findOneAndUpdate(req.params.id, req.body, { new: true })
+    const userUpload = await User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     if (!userUpload) return res.status(404).json({ message: 'User not found for update' })
     res.status(201).json(userUpload)
   } catch (err) {
-    return res.status(500).json({ message: 'Error not found' })
+    return res.status(500).json({ message: `Error on server ${err}` })
   }
 }
 

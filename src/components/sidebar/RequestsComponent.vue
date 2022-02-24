@@ -14,11 +14,11 @@
     :key="request._id"
     >
       <div class="flex gap-3">
-        <img alt="Avatar" class="w-12 h-12 border-2 border-white-light rounded-full object-cover">
+        <img :src="`./storage/${request.image}`" alt="Avatar" class="w-12 h-12 border-2 border-white-light rounded-full object-cover">
         <div>
           <span class="font-bold name-chat text-lg">{{ request.name }}</span>
           <div class="flex gap-2 items-center">
-            <button class="bg-blue text-white-light px-3 py-2 rounded-md mt-2" @click="acceptRequest(request._id)">Aceptar solicitud</button>
+            <button class="bg-blue text-white-light px-3 py-2 rounded-md mt-2" @click="acceptRequest(request._id)">Aceptar</button>
             <button class="bg-red text-white-light px-3 py-2 rounded-md mt-2">Rechazar</button>
           </div>
         </div>

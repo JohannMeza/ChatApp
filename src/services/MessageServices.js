@@ -9,5 +9,8 @@ export const showMessage = async (id) =>
 export const storeMessages = async (body) =>
   await axios.post('/message', body)
 
+export const updateViewed = async (body) =>
+  await axios.post('/message/viewed', body)
+
 export const showMessageUserByUser = async (body) =>
   await axios.post('/message/user', body)

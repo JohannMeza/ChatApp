@@ -13,7 +13,6 @@ const routes = [
     path: "/",
     name: "Home",
     component: SignIn,
-    
   },
   {
     path: "/login",
@@ -37,6 +36,11 @@ const routes = [
       }
     ]
   },
+  {
+    path: '/:pathMedia(.*)',
+    name: 'NotFound',
+    component: SignIn
+  }
 ];
 
 const history = createWebHistory();

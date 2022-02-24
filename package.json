@@ -6,13 +6,15 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "ncp:serve": "ncp server dist/server"
   },
   "dependencies": {
     "@tailwindcss/postcss7-compat": "^2.2.17",
     "autoprefixer": "^9",
     "axios": "^0.25.0",
     "core-js": "^3.6.5",
+    "ncp": "^2.0.0",
     "postcss": "^7",
     "socket.io-client": "^4.4.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17",

@@ -3,7 +3,7 @@
     <div class="py-3 md:py-0">
       <div class="flex justify-between items-center relative">
         <div class="flex items-center gap-2">
-          <img alt="Avatar" class="w-12 h-12 border-2 border-white-light rounded-full object-cover">
+          <img :src="`./storage/${$store.state.user.image}`" alt="Avatar" class="w-12 h-12 border-2 border-white-light rounded-full object-cover">
           <h1 class="font-bold text-2xl">{{ $store.state.user.name }}</h1>
         </div>
         <span class="btnchat relative" @click="$emit('emit-cmponent-perfil', 'PerfilUser')"><i class="fas fa-ellipsis-v"></i></span>

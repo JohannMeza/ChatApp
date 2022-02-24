@@ -8,6 +8,7 @@ router.get('/:id', messageController.show)
 router.post('/user', messageController.userMessages)
 router.post('/',  messageController.store)
 router.put('/:id', messageController.updated)
+router.post('/viewed', messageController.updateViewed)
 router.delete('/:id', messageController.deleted)
 
 module.exports = router

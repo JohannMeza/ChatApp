@@ -1,14 +1,20 @@
 <template>
   <div class="h-full">
-    <div v-if="chatData._id" style="max-height: 100%;">
+    <div v-if="chatData._id" class="h-full" style="max-height: 100%;">
       <div 
       class="relative panel-message"
       >
       <!-- v-show="dataUserActive" -->
         <div class="flex justify-between relative bottom-0 items-center p-5">
           <div class="flex items-center gap-3">
-            <span class="btnchat btnPrevius" @click="chatData = {}, $emit('mobile-chat', true)"><i class="fas fa-chevron-left"></i></span>
-            <img src="../assets/user-default.png" alt="Avatar" class="w-12 h-12 border-2 border-white-light rounded-full object-cover">
+            <span 
+            class="btnchat btnPrevius" 
+            @click="$emit('mobile-chat', true)"
+            
+            >
+            <i class="fas fa-chevron-left"></i>
+            </span>
+            <img :src="chatData.image ? `./storage/${chatData.image}` : './storage/user-default.png'" alt="Avatar" class="w-12 h-12 border-2 border-white-light rounded-full object-cover">
             <div class="pt-2">
               <span class="font-bold name-chat text-lg block text leading-3">{{ chatData.name }}</span>
               <span>Activo</span>
@@ -20,20 +26,20 @@
 
         <div class="overflow-auto messages px-5">
           <div class="bg-third px-3 py-4 rounded-lg text-center leading-5">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis dolores aperiam esse, magni velit veniam ut eos. Consectetur veniam repellat doloremque porro dignissimos, dolore cumque ipsum quaerat veritatis sit labore.
+            Los mensajes y archivos no estan cifrados, por su seguridad no envien cuentas personales u otros datos sensibles, pipedrive no se hara responsable de robo de información u otras cosas, gracias por su comprensión.
           </div>
 
-          <div class="flex-r-center my-2">
+          <!-- <div class="flex-r-center my-2">
             <span class="inline-block text-gray-100 bg-primary mx-auto p-2 rounded-md">Se union Johann Meza</span>
-          </div>
+          </div> -->
 
           <!-- Mensajes -->
           <div class="mt-5" v-if="messages && messages.length !== 0">
             <div v-for="message in messages" :key="message._id">
               <!-- Messages send -->
-              <div class="my-3 ml-auto w-5/6 md:w-2/5"  v-if="$store.state.id === message.sentBy">
+              <div class="flex flex-col items-end my-3 ml-auto w-5/6 md:w-3/5"  v-if="$store.state.id === message.sentBy">
                 <div class="text-right">
-                  <span>Enviado a las 5:50 pm</span>
+                  <span>Enviado a las {{ horaHumana(new Date(message.createdAt).toLocaleTimeString()) }}</span>
                 </div>
                 <div class="relative message-from shadow-xl">
                   <div class="bg-gray-100 p-3 rounded-md z-20 relative">
@@ -44,14 +50,20 @@
                 </div>
                 <div class="text-right relative z-30 mt-3">
                   <span class="font-bold mr-1">Enviado</span>
-                  <span class="text-blue text-md"><i class="fas fa-check-double"></i></span>
+
+                  <span class="text-blue text-xs" v-if="message.viewed">
+                    <i class="fas fa-check-double"></i>
+                  </span>
+                  <span class="text-blue text-xs" v-if="!message.viewed">
+                    <i class="fas fa-check"></i>
+                  </span>
                 </div>
               </div>
 
               <!-- Message receiver -->
-              <div class="my-3 w-5/6 md:w-2/5" v-else>
+              <div class="flex flex-col items-start my-3 w-5/6 md:w-3/5" v-else>
                 <div class="text-right">
-                  <span>Enviado a las 5:50 pm</span>
+                  <span>Enviado a las {{ horaHumana(new Date(message.createdAt).toLocaleTimeString()) }}</span>
                 </div>
                 <div class="relative message-to shadow-xl">
                   <div class="bg-gray-100 p-3 rounded-md z-20 relative">
@@ -63,13 +75,9 @@
               </div>
             </div>
           </div>
-
-          <div v-else>
-            Sin Mensajes
-          </div>
         </div>
         
-        <div class="relative bottom-0 z-40 flex flex-col-reverse">
+        <div class="relative bottom-0 pb-3 z-40 flex flex-col-reverse">
           <form 
           @submit.prevent="sendMessage" 
           class="w-11/12 mx-auto flex flex-r-center rounded-md px-3 py-0 bg-white-light relative right-0 left-0 bottom-0"
@@ -83,10 +91,9 @@
             id="inputSend"
             class="input-send border-none outline-none h-6 max-h-28 rounded-xl font-chettan text-base md:text-xl w-full py-2 z-20" 
             style="min-height: 45px; resize: none;" 
-            v-model="shippingInformation.message"
             required
-            >
-            </textarea>
+            ></textarea>
+            <!-- v-model="shippingInformation.message" -->
             <button type="submit" class="input-btn flex-r-center cursor-pointer self-end text-blue text-xl md:text-2xl bottom-2 z-40 right-2"><i class="fas fa-paper-plane"></i></button>
           </form>
           
@@ -126,12 +133,12 @@
 import { socket } from '../socket.client'
 
 // --- Vue
-import { ref, watchEffect } from "vue"
+import { onUpdated, ref, watchEffect } from "vue"
 import { useStore } from "vuex";
 
 // --- Services
 import { storeRequest } from "../services/RequestServices"
-import { showMessageUserByUser, storeMessages } from "../services/MessageServices";
+import { showMessageUserByUser, storeMessages, updateViewed } from "../services/MessageServices";
 
 // --- Components
 import PerfilMessage from './PerfilMessage.vue'
@@ -147,7 +154,7 @@ export default {
       default() {
         return {}
       }
-    }
+    }, 
   },
   
   setup(props) {
@@ -158,6 +165,7 @@ export default {
       sentBy: '',
       receivedBy: '',
       message: '',
+      createdAt: '',
     })
     
     /**
@@ -167,11 +175,11 @@ export default {
      * 
      */
     const getUserAndMessage = async () => {
-      if (chatData.value._id) {
+      // if (chatData.value._id) {
         const res = await showMessageUserByUser({ sentBy: store.state.id, receivedBy: props.userData._id })
         messages.value = res.data
         chatIteration()
-      }
+      // }
     }
 
     /**
@@ -180,11 +188,17 @@ export default {
     */
     const sendMessage = async () => {
       try {
+        const $textarea = document.getElementById('inputSend')
+        shippingInformation.value.message = $textarea.value
+        shippingInformation.value.createdAt = new Date().toString()
+
         await storeMessages(shippingInformation.value)
-        client_Message(shippingInformation.value)
         chatIteration()
 
-        shippingInformation.value.message = ""
+        client_Message(shippingInformation.value)
+        getUserAndMessage()
+
+        $textarea.value = ''
       } catch (err) {
         console.error(err)
       }
@@ -200,15 +214,33 @@ export default {
       $perfilElement.classList.toggle('perfil-message-active')
     }
 
+    /**
+     * @return {message viewed}
+     * The create the component, be will update the state to viewed
+     */
+
+    const visualized = async () => {
+      if (chatData.value && messages.value) {
+        const lastMessage = messages.value[messages.value.length - 1]
+        if (lastMessage) {
+          if (lastMessage.viewed === false && lastMessage.receivedBy !== props.userData._id) {
+            const data = { sentBy: store.state.id, receivedBy: props.userData._id }
+            await updateViewed(data)
+            socket.emit("client:view", data)
+          }
+        }
+      }
+    }
+
     const sentRequest = async (id) => {
-      const res = await storeRequest({ idUser: id, idRequest: store.state.id })
-      console.log(res.data)
+      await storeRequest({ idUser: id, idRequest: store.state.id })
     }
 
     /**
      * @return {event}
      * executed by emitting a browser event
      */
+
     const calculateHeight = () => {
       const $input = event.target
       $input.style.height = "45px";
@@ -226,29 +258,60 @@ export default {
       }
     }
 
+    const horaHumana = (hora) => {
+      let minutos = parseInt(hora.substring(3,5))
+      hora = parseInt(hora.substring(0,2))
+      if (hora > 12) {
+        return `${hora - 12}:${minutos.toString().length === 1 ? '0' + minutos : minutos} p.m.`
+      } else {
+        if (hora === 12 && minutos >= 0) {
+          return `${hora}:${minutos.toString().length === 1 ? '0' + minutos : minutos} p.m.`
+        }
+
+        if (hora === 0) {
+          return `12:${minutos.toString().length === 1 ? '0' + minutos : minutos} a.m.`
+        }
+
+        return `${hora}:${minutos.toString().length === 1 ? '0' + minutos : minutos} a.m.`
+      }
+    }
+
     // Function Socket.io
     const client_Message = (messageData) => {
-      const listener = () => {
-        getUserAndMessage()
-        // messages.value.push(data)
-        // setTimeout(() => socket.removeListener('server:messagereturn', listener), 3000)
-        // socket.removeListener('server:messagereturn', listener)
-      }
-      socket.on('server:messagereturn', listener)
-      socket.emit('client:messagesend', messageData)
-      // setTimeout(() => socket.removeListener('server:messagereturn', listener), 1000)
+      socket.emit('client:messagesend', messageData);
     }
+
+    socket.on('server:messagereturn', data => {
+      if (data.sentBy === chatData.value._id) {
+        if (messages.value) {
+          messages.value.push(data)
+        }
+        chatIteration()
+      }
+    })
+
+    socket.on('server:view', () => {
+      getUserAndMessage()
+      visualized()
+    })
+
+    // Life Cycle
+  
+    onUpdated(() => {
+      visualized()
+    })
 
     watchEffect(() => {
       chatData.value = props.userData
-      if (chatData.value._id) {
+
+      if (props.userData) {
         getUserAndMessage()
 
         shippingInformation.value = {
           sentBy: store.state.id,
           receivedBy: chatData.value._id,
+          viewed: false,
         }
-
       } 
     })
 
@@ -261,6 +324,7 @@ export default {
       sendMessage,
       calculateHeight,
       sentRequest,
+      horaHumana,
 
 
       // Socket.io
@@ -275,8 +339,9 @@ export default {
   height: 100%;
   max-height: 95vh;
   display: grid;
+  grid-gap: 15px;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr auto 1fr;
+  grid-template-rows: auto 1fr auto;
 }
 .perfil-message-active {
   transform: translateX(100%);

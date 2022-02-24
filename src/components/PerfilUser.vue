@@ -5,8 +5,8 @@
 
       <form class="flex-c-center" enctype="multipart/form-data" @submit.prevent="sendFile">
         <label for="file" class="inline-block rounded-full overflow-hidden relative border-2 border-white-light edit-content">
-          <img :src="`../public/storage/${userImage}`" id="image-avatar" alt="Avatar" class="w-40 h-40 object-cover">
-
+          <img :src="userImage ? `./storage/${userImage}` : './storage/user-default.png'" id="image-avatar" alt="Avatar" class="w-40 h-40 object-cover">
+          
           <div class="absolute top-0 select-none flex flex-c-center w-full h-full edit-image text-white-light">
             <span class="text-6xl"><i class="far fa-image"></i></span>
             <span>Cambiar Imagen</span>
@@ -110,7 +110,7 @@ export default {
 
     const userName = ref('');
     const userDescription = ref('');
-    const userImage = ref('')
+    const userImage = ref()
 
     const switchData = ref({
       name: false,
@@ -159,7 +159,6 @@ export default {
       try {
         const res = await updatedUser(store.state.id, data)
         store.state.user = res.data
-        console.log(store.state.user, res.data)
       } catch (err) {
         console.error(err)
       }
@@ -168,7 +167,7 @@ export default {
     watchEffect(() => {
       userName.value = store.state.user.name
       userDescription.value = store.state.user.description
-      userImage.value = store.state.user.imgUrl
+      userImage.value = store.state.user.image
     })
 
     return { 

@@ -1,6 +1,6 @@
 <template>
   <div 
-  class="absolute top-0 right-0 z-40 h-full w-96 rounded-xl perfil-message block-important perfil-message-active bg-white-opacity"
+  class="absolute top-0 right-0 z-40 h-full w-full md:w-96 rounded-xl perfil-message block-important perfil-message-active bg-white-opacity"
   id="perfilMessage"
   v-show="userData._id"
   >
@@ -8,11 +8,11 @@
       <span class="btnchat" @click="perfilMessage"><i class="fas fa-chevron-left"></i></span>
 
       <div class="flex-c-center">
-        <img src="../assets/user-default.png" alt="Avatar" class="w-2/5 border-2 border-white-light rounded-full object-cover">
+        <img :src="userData.image ? `./storage/${userData.image}` : './storage/user-default.png'"  alt="Avatar" class="w-2/5 border-2 border-white-light rounded-full object-cover">
 
-        <div>
+        <div class="text-center">
           <span class="font-bold text-xl">{{ userData.name }}</span>
-          <p class="text-center">Description</p>
+          <p class="text-center">{{ userData.description }}</p>
         </div>
 
       </div>

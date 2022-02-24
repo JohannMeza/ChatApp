@@ -74,6 +74,36 @@ const updated = async (req, res) => {
   }
 }
 
+const updateViewed = async (req, res) => {
+  try {
+    const { sentBy, receivedBy } = req.body;
+    if (!sentBy || !receivedBy) return res.status(404).json({ message: 'Data required incomplete' })
+    
+    
+    const view = await Message.updateMany({ 
+      $or: [
+        { 
+          $and: [ 
+            { sentBy: sentBy }, 
+            { receivedBy: receivedBy } 
+          ]
+        },
+        {
+          $and: [ 
+            { sentBy: receivedBy }, 
+            { receivedBy: sentBy } 
+          ]
+        },
+      ]
+    }, { viewed: true }, { multi: true })
+    console.log(view)
+    if (!view) return res.status(404).json({ message: 'Not found messages for update' })
+    res.status(201).json(view)
+  } catch (err) {
+    res.status(500).json({ message: 'Error on server: ' + err })
+  }
+}
+
 const deleted = async (req, res) => {
   try {
     const message = await Message.findOneAndDelete(req.params.id);
@@ -90,5 +120,6 @@ module.exports = {
   show,
   store,
   updated,
+  updateViewed,
   deleted
 }

@@ -2,6 +2,7 @@ const cors = require('cors')
 const path = require('path');
 const morgan = require('morgan')
 const config = require('./config')
+const history = require('connect-history-api-fallback')
 
 const express = require('express');
 const app = express();
@@ -11,8 +12,9 @@ const socketio = require('socket.io')
 const server = http.createServer(app)
 const io = socketio(server, {
   cors: {
+    // origin: "https://application-messages.herokuapp.com/",
     origin: "http://localhost:3001",
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST", "PUT"]
   }
 })
 require('./socket.server')(io)
@@ -28,6 +30,12 @@ const RequestRoutes = require('./routes/request.routes')
 
 // --- Settings
 app.set('port', process.env.PORT || config.PORT || 3000);
+
+// app.use(history({
+//   verbose: true
+// }))
+
+app.use(history())
 
 // --- Files Public
 app.use(express.static(path.join(__dirname, '..', '/', 'public')))

@@ -110,7 +110,7 @@ export default {
      */
     const chatEmitUser = (info) => {
       const { data, type } = info
-
+      
       const datos = store.state.contacts.find(el => {
         if (el._id === data._id) {
           return true

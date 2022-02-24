@@ -2,7 +2,8 @@
 node_modules
 server/node_modules
 /dist
-
+deploy
+dist
 
 # local env files
 .env.local
