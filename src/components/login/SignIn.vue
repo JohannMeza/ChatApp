@@ -13,7 +13,7 @@
 
         <div>
           <label for="email" class="font-bold block mb-2">Email</label>
-          <input type="email" required autocomplete="off" id="email" class="block w-full reset-input" v-model="dataUser.email">
+          <input type="email" required autocomplete="off" id="email" class="block bg-white-light w-full reset-input" v-model="dataUser.email">
         </div>
 
         <div>
@@ -23,7 +23,7 @@
             type="password" 
             required 
             id="pass" 
-            class="block w-full reset-input" 
+            class="block bg-white-light w-full reset-input" 
             v-model="dataUser.password"
             v-if="!visiblePassword"
             >
@@ -31,7 +31,7 @@
             type="text" 
             required 
             id="pass" 
-            class="block w-full reset-input" 
+            class="block bg-white-light w-full reset-input" 
             v-model="dataUser.password"
             v-else
             >

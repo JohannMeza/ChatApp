@@ -22,6 +22,7 @@
       <!-- v-show="dataUserActive" -->
         <chat-message 
         :userData="chatDataActive"
+        :contactsID="onlyContacts"
         @mobile-chat="switchComponentsMobile = false"
         ></chat-message>
       </div>
@@ -37,10 +38,14 @@ import ChatMessage from './ChatMessage.vue';
 
 // --- Services
 import { showUser } from '../services/UserServices';
+import { showOnlyContacts } from '../services/ContactsServices'
 
 // --- Vue
 import { useStore } from 'vuex';
 import { ref, watchEffect } from 'vue';
+
+// --- Socket.io
+import { socket } from '../socket.client'
 
 // import { showMessageUserByUser, storeMessages } from '../services/MessageServices';
 // import { indexMessageGroup } from '../services/MessageGroupServices';
@@ -56,35 +61,44 @@ export default {
       default() {
         return {}
       }
-    }
+    },
+    contactsID: Object
   },
 
   setup() {
     const store = useStore()
     const componentActiveSidebar = ref('Sidebar')
     const chatDataActive = ref({})
+    const onlyContacts = ref();
     const switchComponentsMobile = ref(false)
-
     const chatOfUser = ref({
       contacts: {},
       groups: {}
     });
+
     /**
      * @return 
      * Contacts, Groups and Contacts of User
      */
     const asyncPromise = async () => {
       Promise.all([{
-        user: await showUser(store.state.id)
+        user: await showUser(store.state.id),
+        contacts: await showOnlyContacts(store.state.id)
       }]) 
       .then(result => result[0])
       .then(res => {
         store.state.user = res.user.data
+        onlyContacts.value = res.contacts.data.idContacts
+        socket.emit('client:active', { id: res.contacts.data._id, contacts: onlyContacts.value })
       })
       .catch(err => {
         console.error(err)
       })
     }
+
+    /**
+     * activate active chat component
+     */
 
     const perfilMessage = () => {
       const $perfilElement = document.getElementById('sidebar');
@@ -140,12 +154,11 @@ export default {
       componentActiveSidebar.value = info
     }
 
+
     // LIfe Cycles 
     watchEffect(() => {
       if (store.state.id !== '') asyncPromise()
     })
-
-
 
     return { 
       // Variables
@@ -153,6 +166,7 @@ export default {
       componentActiveSidebar,
       chatDataActive,
       chatOfUser,
+      onlyContacts,
     
       // Functions
       emittedComponent,

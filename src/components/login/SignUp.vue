@@ -11,12 +11,12 @@
           <div class="flex flex-col md:flex md:flex-row gap-3">
             <div class="flex-grow">
               <label for="name" class="font-bold block mb-2">Nombre</label>
-              <input type="text" autocomplete="off" required id="name" class="block w-full reset-input" v-model="userData.name">
+              <input type="text" autocomplete="off" required id="name" class="bg-white-light block w-full reset-input" v-model="userData.name">
             </div>
             
             <div class="flex-grow">
               <label for="email" class="font-bold block mb-2">Email</label>
-              <input type="email" autocomplete="off" required id="email" class="block w-full reset-input" v-model="userData.email">
+              <input type="email" autocomplete="off" required id="email" class="block bg-white-light w-full reset-input" v-model="userData.email">
             </div>
           </div>
 
@@ -26,8 +26,8 @@
                 <label for="pass" autocomplete="off" class="font-bold block mb-2">Contraseña</label>
 
                 <div class="relative flex items-center">
-                  <input type="password" id="pass" required class="block pr-10 w-full border-none outline-none rounded-full font-chettan text-xl pl-3 h-10" v-if="!visiblePassword" v-model="userData.password">
-                  <input type="text" id="pass" required class="block pr-10 w-full border-none outline-none rounded-full font-chettan text-xl pl-3 h-10" v-else v-model="userData.password">
+                  <input type="password" id="pass" required class="block pr-10 w-full border-none outline-none bg-white-light rounded-full font-chettan text-xl pl-3 h-10" v-if="!visiblePassword" v-model="userData.password">
+                  <input type="text" id="pass" required class="block pr-10 w-full border-none outline-none bg-white-light rounded-full font-chettan text-xl pl-3 h-10" v-else v-model="userData.password">
                 
                   <span class="btnchat absolute top-0 bottom-0 my-auto right-3">
                     <input type="checkbox" id="showPass" class="hidden" v-model="visiblePassword">
@@ -43,8 +43,8 @@
                 <label for="passRepeat" autocomplete="off" class="font-bold block mb-2">Repetir contraseña</label>
                 
                 <div class="relative flex items-center">
-                  <input type="password" id="passRepeat" required class="block pr-10 w-full border-none outline-none rounded-full font-chettan text-xl pl-3 h-10" v-if="!visiblePasswordRepeat" v-model="userData.repeatPassword">
-                  <input type="text" id="passRepeat" required class="block pr-10 w-full border-none outline-none rounded-full font-chettan text-xl pl-3 h-10" v-else v-model="userData.repeatPassword">
+                  <input type="password" id="passRepeat" required class="block pr-10 w-full bg-white-light border-none outline-none rounded-full font-chettan text-xl pl-3 h-10" v-if="!visiblePasswordRepeat" v-model="userData.repeatPassword">
+                  <input type="text" id="passRepeat" required class="block pr-10 w-full bg-white-light border-none outline-none rounded-full font-chettan text-xl pl-3 h-10" v-else v-model="userData.repeatPassword">
                 
                   <span class="btnchat absolute top-0 bottom-0 my-auto right-3">
                     <input type="checkbox" id="showPassRepeat" class="hidden" v-model="visiblePasswordRepeat">

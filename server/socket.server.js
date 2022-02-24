@@ -9,8 +9,9 @@ module.exports = (io) => {
         socketID: socket.id,
         userID: data
       }
-  
+      
       users.push(userData)
+      console.log("Usuario nuevo", users)
     })
     
     
@@ -30,6 +31,21 @@ module.exports = (io) => {
           return io.to(el.socketID).emit('server:view', true)
         }
       })
+    })
+
+    socket.on('client:active', data => {
+      // console.log(data, users)
+      const contactsActives = data.contacts.filter(contact => users.find(user => user.userID === contact) )
+      if (contactsActives.length !== 0) {
+        const arrID = []
+        contactsActives.forEach(id => {
+          arrID.push(id.socketID)
+        })
+
+        console.log("ID", arrID)
+        console.log("Contactos activos", contactsActives)
+        io.to(contactsActives).emit('server:active', data.id)
+      }
     })
 
     socket.on('disconnect', close => {

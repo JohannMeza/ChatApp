@@ -37,6 +37,21 @@ const show = async (req, res) => {
   }
 }
 
+const showOnlyContacts = async (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log(id)
+    if (!id) return res.status(404).json({ message: 'ID provided not found' })
+
+    const contactsAll = await Contacts.findOne({ idUser: id }, { idContacts: 1 })
+    if(!contactsAll) return res.status(201).json({ message: 'Sin contactos' })
+    res.status(201).json(contactsAll)
+
+  } catch (err) {
+    res.status(500).json({ message: 'Error on server ' + err })
+  }
+}
+
 const update = async (req, res) => {
   try {
     const id = req.params.id
@@ -56,6 +71,7 @@ module.exports = {
   index,
   store,
   show,
+  showOnlyContacts,
   update,
   deleted
 }

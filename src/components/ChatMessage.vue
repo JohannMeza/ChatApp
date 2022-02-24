@@ -155,6 +155,7 @@ export default {
         return {}
       }
     }, 
+    contactsID: Object
   },
   
   setup(props) {
@@ -239,6 +240,7 @@ export default {
     /**
      * @return {event}
      * executed by emitting a browser event
+     * emited writing event 
      */
 
     const calculateHeight = () => {
@@ -246,6 +248,8 @@ export default {
       $input.style.height = "45px";
       let scHeight = $input.scrollHeight;
       $input.style.height = `${scHeight}px`;
+
+      // socket.emit('client:writing', props.contactsID)
     }
 
     const chatIteration = () => {
@@ -293,6 +297,11 @@ export default {
     socket.on('server:view', () => {
       getUserAndMessage()
       visualized()
+    })
+
+    socket.on('server:active', userActive => {
+      console.log("Un nuevo usuario conectado")
+      console.log(userActive)
     })
 
     // Life Cycle

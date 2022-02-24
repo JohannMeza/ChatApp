@@ -4,7 +4,7 @@
     type="search" 
     placeholder="Buscar contactos ..." 
     autocomplete="off"
-    class="border-none outline-none rounded font-chettan text-lg px-3 w-full h-10"
+    class="border-none bg-white-light outline-none rounded font-chettan text-lg px-3 w-full h-10"
     @change="searchGroups"
     >
 

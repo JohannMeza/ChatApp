@@ -2,7 +2,7 @@ const cors = require('cors')
 const path = require('path');
 const morgan = require('morgan')
 const config = require('./config')
-const history = require('connect-history-api-fallback')
+// const history = require('connect-history-api-fallback')
 
 const express = require('express');
 const app = express();
@@ -35,7 +35,7 @@ app.set('port', process.env.PORT || config.PORT || 3000);
 //   verbose: true
 // }))
 
-app.use(history())
+// app.use(history())
 
 // --- Files Public
 app.use(express.static(path.join(__dirname, '..', '/', 'public')))
